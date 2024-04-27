@@ -1,0 +1,17 @@
+POST http://localhost:3000/admin/form
+Content-Type: application/json
+
+{
+  "title": "Formtitle",
+  "questions": [
+    {
+      "text": "QuestionTitle",
+      "type": "TEXT",
+      "options": [
+        { "text": "option1" },
+        { "text": "option2" },
+        { "text": "option3" }
+      ]
+    }
+  ]
+}
