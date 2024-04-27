@@ -9,7 +9,11 @@ formRouter.get('/:accessCode', async (req, res) => {
 			accessCode: req.params.accessCode,
 		},
 		include: {
-			questions: true,
+			questions: {
+				include: {
+					options: true,
+				},
+			},
 		},
 	})
 
