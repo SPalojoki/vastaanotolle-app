@@ -19,8 +19,8 @@ model Form {
   id         Int         @id @default(autoincrement())
   title      String
   questions  Question[]
-  accessCode String
-  published Boolean @default(false)
+  accessCode String      @unique
+  published Boolean      @default(false)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }
