@@ -13,7 +13,7 @@ const SidebarButton = ({
   return (
     <button
       type='button'
-      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 transition-all ${isActive ? 'scale-[1.01] bg-blue-500 font-bold text-white drop-shadow-md' : 'outline outline-1 outline-gray-200 hover:outline-gray-300'}`}
+      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 transition-all ${isActive ? 'scale-[1.01] bg-blue-800 font-bold text-white drop-shadow-md' : 'outline outline-1 outline-gray-200 hover:outline-gray-300'}`}
     >
       <div className='text-2xl'>{children}</div>
       {text}
@@ -30,7 +30,7 @@ const Admin = () => {
           <h1 className='mb-6 text-2xl font-bold'>Admin interface</h1>
         </div>
         <div className='flex w-full flex-col gap-3'>
-          <SidebarButton text='Questionnaire' isActive={true}>
+          <SidebarButton text='Forms' isActive={true}>
             <HiDocumentText />
           </SidebarButton>
           <SidebarButton text='Manage account' isActive={false}>
@@ -43,7 +43,7 @@ const Admin = () => {
           Sign out
         </button>
       </nav>
-      <main className='flex bg-zinc-50'>
+      <main className='bg-zinc-50 p-5'>
         <Outlet />
       </main>
     </div>

@@ -1,8 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
+
+// Routing related
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Admin from './routes/Admin'
+import Forms, { loader as rootLoader } from './routes/Forms'
 
 const router = createBrowserRouter([
   {
@@ -11,7 +14,15 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin',
+    errorElement: <div>An error has occurred!</div>, // TODO: Style this
     element: <Admin />,
+    children: [
+      {
+        index: true,
+        element: <Forms />,
+        loader: rootLoader,
+      },
+    ],
   },
 ])
 
