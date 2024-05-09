@@ -6,9 +6,12 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"suspicious": {
+				"noArrayIndexKey": "off"
+			}
 		},
-		"ignore": ["src/types/guards.ts"]
+		"ignore": ["src/types/guards.ts"],
 	},
 	"formatter": {
 		"enabled": false

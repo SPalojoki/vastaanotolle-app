@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
 const NavigationButton = ({
   to,
@@ -49,19 +49,32 @@ const NavigationBar = () => {
 }
 
 const Header = () => {
-  return (
-    <div className='z-10 shadow-md'>
-      <h2 className='container mx-auto my-6 text-4xl font-bold'>Forms</h2>
-    </div>
-  )
+  const location = useLocation()
+  let title: string
+
+  switch (location.pathname) {
+    case '/admin/':
+      title = 'Forms'
+      break
+    case '/admin/form/new':
+      title = 'New Form'
+      break
+    default:
+      title = ''
+      break
+  }
+
+  return <h2 className='container mx-auto py-6 text-4xl font-bold'>{title}</h2>
 }
 
 const Admin = () => {
   return (
-    <div className='flex h-screen flex-col'>
-      <NavigationBar />
-      <Header />
-      <main className='flex-grow bg-gray-100'>
+    <div className='grid h-screen grid-rows-[auto_1fr]'>
+      <div className='z-10 shadow-md'>
+        <NavigationBar />
+        <Header />
+      </div>
+      <main className='overflow-auto bg-gray-100'>
         <div className='container mx-auto py-10'>
           <Outlet />
         </div>

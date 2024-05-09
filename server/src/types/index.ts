@@ -6,7 +6,7 @@ export interface ValidatedRequest<T> extends Request {
 }
 
 export const optionSubmissionSchema = z.object({
-	text: z.string().min(1),
+	text: z.string(),
 })
 
 export const questionSubmissionSchema = z.object({

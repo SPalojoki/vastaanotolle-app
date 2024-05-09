@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { useLoaderData } from 'react-router-dom'
+import { Link, useLoaderData } from 'react-router-dom'
 import { isFormArray } from '../types/guards'
 import type { LoaderData, Form } from '../types'
 import { format } from 'date-fns'
-import { HiPlus } from 'react-icons/hi'
+import { MdAdd } from 'react-icons/md'
 
 export const loader = async () => {
   const { data } = await axios.get('http://localhost:3000/admin/forms')
@@ -33,7 +33,7 @@ const Forms = () => {
               <th className='px-6 py-3'>Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='bg-gray-50'>
             {data.map((form: Form) => (
               <tr key={form.id}>
                 <th className='px-6 py-3 font-medium text-gray-900'>
@@ -54,13 +54,15 @@ const Forms = () => {
         </table>
       )}
       <div className='flex justify-center pt-8'>
-        <button
-          type='button'
-          className='flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-inner'
-        >
-          <HiPlus size={24} />
-          Create new form
-        </button>
+        <Link to='form/new'>
+          <button
+            type='button'
+            className='flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-inner'
+          >
+            <MdAdd size={24} />
+            Create new form
+          </button>
+        </Link>
       </div>
     </div>
   )
