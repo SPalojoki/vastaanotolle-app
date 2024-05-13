@@ -7,11 +7,19 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Admin from './routes/Admin'
 import Forms, { loader as rootLoader } from './routes/Forms'
 import NewForm from './routes/NewForm'
+import Welcome from './routes/Welcome'
+import Patient from './routes/Patient'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <div>To be implemented...</div>,
+    element: <Patient />,
+    children: [
+      {
+        index: true,
+        element: <Welcome />,
+      },
+    ],
   },
   {
     path: '/admin',

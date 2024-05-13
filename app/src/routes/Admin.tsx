@@ -70,10 +70,10 @@ const Header = () => {
 const Admin = () => {
   return (
     <div className='grid h-screen grid-rows-[auto_1fr]'>
-      <div className='z-10 shadow-md'>
+      <header className='z-10 shadow-md'>
         <NavigationBar />
         <Header />
-      </div>
+      </header>
       <main className='overflow-auto bg-gray-100'>
         <div className='container mx-auto py-10'>
           <Outlet />

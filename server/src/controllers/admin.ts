@@ -41,6 +41,7 @@ adminRouter.get('/form/:id', async (req, res) => {
 		return res.status(400).json({ error: 'Invalid ID' })
 	}
 
+	
 	const form = await prisma.form.findUnique({
 		where: {
 			id,
