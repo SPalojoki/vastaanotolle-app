@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import { MdAdd } from 'react-icons/md'
 
 export const loader = async () => {
-  const { data } = await axios.get('http://localhost:3000/admin/forms')
+  const { data } = await axios.get('/api/admin/forms')
   return { data }
 }
 

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    container_name: vastaanotolle-reverseproxy-dev
+    depends_on:
+      - vastaanotolle-frontend-dev
+      - vastaanotolle-backend-dev
+  vastaanotolle-frontend-dev:
+    image: vastaanotolle-frontend-dev
+    build:
+      context: ./app/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./app:/usr/src/app
+      - vastaanotolle_frontend_dev_node_modules:/usr/src/app/node_modules
+    container_name: vastaanotolle-frontend-dev
+  vastaanotolle-backend-dev:
+    image: vastaanotolle-backend-dev
+    build:
+      context: ./server/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./server:/usr/src/app
+      - vastaanotolle_backend_dev_node_modules:/usr/src/app/node_modules
+    depends_on:
+      - vastaanotolle-db-dev
+    container_name: vastaanotolle-backend-dev
+  vastaanotolle-db-dev:
+    image: postgres
+    environment:
+      POSTGRES_DB: vastaanotolle_pg
+      POSTGRES_USER: dev_admin
+      POSTGRES_PASSWORD: dev_admin_password
+    volumes:
+      - vastaanotolle_pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+  
+
+volumes:
+  vastaanotolle_pg_data:
+    driver: local
+  vastaanotolle_backend_dev_node_modules:
+    driver: local
+  vastaanotolle_frontend_dev_node_modules:
+    driver: local

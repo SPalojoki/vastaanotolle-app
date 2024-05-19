@@ -52,8 +52,8 @@ const Header = () => {
   const location = useLocation()
   let title: string
 
-  switch (location.pathname) {
-    case '/admin/':
+  switch (location.pathname.replace(/\/$/, '')) {
+    case '/admin':
       title = 'Forms'
       break
     case '/admin/form/new':

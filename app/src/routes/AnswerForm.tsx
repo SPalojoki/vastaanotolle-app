@@ -123,7 +123,7 @@ const AnswerForm = () => {
         fetchedData = location.state.data
       } else {
         try {
-          const response = await axios.get('http://localhost:3000/form/' + code)
+          const response = await axios.get('api/form/' + code)
           const data = response.data
           if (isFormItems(data)) {
             fetchedData = data

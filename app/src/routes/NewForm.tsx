@@ -171,7 +171,7 @@ const NewForm = () => {
   }
 
   const saveForm = () => {
-    axios.post('http://localhost:3000/admin/form', items).then(() => {
+    axios.post('/api/admin/form', items).then(() => {
       navigate('/admin')
     })
   }

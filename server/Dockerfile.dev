@@ -1,0 +1,15 @@
+FROM node:20
+
+USER node
+
+WORKDIR /usr/src/app
+
+COPY package.json /usr/src/app/package.json
+
+RUN npm install
+
+COPY .env /usr/src/app/
+
+COPY --chown=node:node . .
+
+CMD ["npm", "run", "dev:migrate"]

@@ -56,7 +56,7 @@ const InputCode = () => {
   // TODO: Centralize fetching logics outside the components
   const fetchForm = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/form/' + code)
+      const response = await axios.get('/api/form/' + code)
       navigate(`/${code}`, { state: { data: response.data } })
     } catch (error: unknown) {
       if (error instanceof AxiosError && error.response?.status === 404) {
