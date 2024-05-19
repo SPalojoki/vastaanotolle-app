@@ -1,5 +1,5 @@
 import { useState, Fragment } from 'react'
-import type { NewFormItems, NewQuestion } from '../types'
+import type { NewFormItems, Question } from '../types'
 import {
   MdRadioButtonChecked,
   MdCheckBox,
@@ -8,22 +8,23 @@ import {
 } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { v4 as uuidv4 } from 'uuid' // Used as temporary local IDs for react keys and filtering. Final ID generated in backend
+
+const generateId = () => Math.floor(Math.random() * 1000000)
 
 const QuestionCard = ({
   details,
   updateQuestion,
   removeQuestion,
 }: {
-  details: NewQuestion
-  updateQuestion: (updated: NewQuestion) => void
+  details: Question
+  updateQuestion: (updated: Question) => void
   removeQuestion: () => void
 }) => {
   const updateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateQuestion({ ...details, text: e.target.value })
   }
 
-  const updateOption = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateOption = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (details.type === 'TEXT') return // Should not be called for TEXT questions
     updateQuestion({
       ...details,
@@ -37,11 +38,11 @@ const QuestionCard = ({
     if (details.type === 'TEXT') return // Should not be called for TEXT questions
     updateQuestion({
       ...details,
-      options: [...details.options, { text: '', id: uuidv4() }],
+      options: [...details.options, { text: '', id: generateId() }],
     })
   }
 
-  const removeOption = (id: string) => {
+  const removeOption = (id: number) => {
     if (details.type === 'TEXT') return // Should not be called for TEXT questions
     updateQuestion({
       ...details,
@@ -144,23 +145,23 @@ const NewForm = () => {
           type,
           text: '',
           options: [
-            { text: '', id: uuidv4() },
-            { text: '', id: uuidv4() },
+            { text: '', id: generateId() },
+            { text: '', id: generateId() },
           ],
-          id: uuidv4(),
+          id: generateId(),
         },
       ],
     })
   }
 
-  const removeQuestion = (id: string) => {
+  const removeQuestion = (id: number) => {
     setItems({
       ...items,
       questions: items.questions.filter((question) => question.id !== id),
     })
   }
 
-  const updateQuestion = (id: string, updated: NewQuestion) => {
+  const updateQuestion = (id: number, updated: Question) => {
     setItems({
       ...items,
       questions: items.questions.map((question) =>

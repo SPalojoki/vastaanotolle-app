@@ -4,14 +4,25 @@ import prisma from '../db/prismaClient'
 const formRouter = express.Router()
 
 formRouter.get('/:accessCode', async (req, res) => {
+	console.log('GET /form/:accessCode')
 	const form = await prisma.form.findUnique({
 		where: {
 			accessCode: req.params.accessCode,
 		},
-		include: {
+		select: {
+			id: true,
+			title: true,
 			questions: {
-				include: {
-					options: true,
+				select: {
+					id: true,
+					text: true,
+					type: true,
+					options: {
+						select: {
+							id: true,
+							text: true,
+						},
+					},
 				},
 			},
 		},

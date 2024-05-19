@@ -9,6 +9,8 @@ import Forms, { loader as rootLoader } from './routes/Forms'
 import NewForm from './routes/NewForm'
 import Welcome from './routes/Welcome'
 import Patient from './routes/Patient'
+import AnswerForm from './routes/AnswerForm'
+import GenerateQR from './routes/GenerateQR'
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Welcome />,
+      },
+      {
+        path: '/generate',
+        element: <GenerateQR />,
+      },
+      {
+        path: ':code',
+        element: <AnswerForm />,
       },
     ],
   },

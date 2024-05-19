@@ -1,5 +1,5 @@
 export interface Form {
-  id: string
+  id: number
   title: string
   accessCode: string
   published: boolean
@@ -12,29 +12,48 @@ export interface LoaderData {
   data: any
 }
 
-export interface NewOptions {
+export interface Option {
   text: string
-  id: string
+  id: number
 }
 
-interface NewQuestionBase {
+interface QuestionBase {
   text: string
-  id: string
+  id: number
 }
-export interface TextQuestion extends NewQuestionBase {
+export interface TextQuestion extends QuestionBase {
   type: 'TEXT'
 }
 
-export interface ChoiceQuestion extends NewQuestionBase {
+export interface ChoiceQuestion extends QuestionBase {
   type: 'MULTIPLE_CHOICE' | 'RADIO'
-  options: NewOptions[]
+  options: Option[]
 }
 
-export type NewQuestion = TextQuestion | ChoiceQuestion
+export type Question = TextQuestion | ChoiceQuestion
 
 export interface NewFormItems {
   title: string
-  questions: NewQuestion[]
+  questions: Question[]
 }
+export interface FormItems extends NewFormItems {
+  id: number
+}
+
+export interface AnswerFormItems extends Omit<FormItems, 'questions'> {
+  questions: QuestionWithAnswer[]
+}
+
+export interface ChoiceQuestionWithAnswer extends ChoiceQuestion {
+  answer: number[]
+}
+
+export interface TextQuestionWithAnswer extends TextQuestion {
+  answer: string
+}
+
+export type QuestionWithAnswer =
+  | TextQuestionWithAnswer
+  | ChoiceQuestionWithAnswer
 
 export type QuestionType = 'TEXT' | 'MULTIPLE_CHOICE' | 'RADIO'
