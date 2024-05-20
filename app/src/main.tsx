@@ -8,14 +8,15 @@ import Admin from './routes/Admin'
 import Forms, { loader as rootLoader } from './routes/Forms'
 import NewForm from './routes/NewForm'
 import Welcome from './routes/Welcome'
-import Patient from './routes/Patient'
+import EndUserWrapper from './routes/EndUserWrapper'
 import AnswerForm from './routes/AnswerForm'
 import GenerateQR from './routes/GenerateQR'
+import ViewForm from './routes/ViewForm'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Patient />,
+    element: <EndUserWrapper />,
     children: [
       {
         index: true,
@@ -28,6 +29,16 @@ const router = createBrowserRouter([
       {
         path: ':code',
         element: <AnswerForm />,
+      },
+    ],
+  },
+  {
+    path: '/doctor',
+    element: <EndUserWrapper />,
+    children: [
+      {
+        index: true,
+        element: <ViewForm />,
       },
     ],
   },

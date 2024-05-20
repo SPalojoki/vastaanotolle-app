@@ -57,3 +57,19 @@ export type QuestionWithAnswer =
   | ChoiceQuestionWithAnswer
 
 export type QuestionType = 'TEXT' | 'MULTIPLE_CHOICE' | 'RADIO'
+
+export type RichAnswer = {
+  value: string[]
+}
+
+export type RichQuestion = {
+  id: number
+  text: string
+  answer: RichAnswer
+}
+
+export type RichSubmission = {
+  formId: number
+  formTitle: string
+  questions: RichQuestion[]
+}

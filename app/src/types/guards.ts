@@ -9,6 +9,9 @@ import type {
   AnswerFormItems,
   FormItems,
   QuestionWithAnswer,
+  RichAnswer,
+  RichQuestion,
+  RichSubmission,
 } from './index'
 
 function isValidISODate(dateString: string): boolean {
@@ -91,3 +94,24 @@ export const isAnswerFormItems = (obj: any): obj is AnswerFormItems =>
   typeof obj.id === 'number' &&
   Array.isArray(obj.questions) &&
   obj.questions.every(isQuestionWithAnswer)
+
+export const isRichAnswer = (obj: any): obj is RichAnswer =>
+  obj !== null &&
+  typeof obj === 'object' &&
+  Array.isArray(obj.value) &&
+  obj.value.every((item: any) => typeof item === 'string')
+
+export const isRichQuestion = (obj: any): obj is RichQuestion =>
+  obj !== null &&
+  typeof obj === 'object' &&
+  typeof obj.id === 'number' &&
+  typeof obj.text === 'string' &&
+  isRichAnswer(obj.answer)
+
+export const isRichSubmission = (obj: any): obj is RichSubmission =>
+  obj !== null &&
+  typeof obj === 'object' &&
+  typeof obj.formId === 'number' &&
+  typeof obj.formTitle === 'string' &&
+  Array.isArray(obj.questions) &&
+  obj.questions.every(isRichQuestion)

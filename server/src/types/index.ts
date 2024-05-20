@@ -5,6 +5,7 @@ export interface ValidatedRequest<T> extends Request {
 	validatedBody: T
 }
 
+// TODO: Check if the schemas should be exported
 export const optionSubmissionSchema = z.object({
 	text: z.string(),
 })
@@ -21,3 +22,18 @@ export const formSubmissionSchema = z.object({
 })
 
 export type FormSubmission = z.infer<typeof formSubmissionSchema>
+
+
+const compressedAnswerSchema = z.union([z.array(z.number()), z.string()]);
+
+const compressedQuestionSchema = z.object({
+  qId: z.number(),
+  a: compressedAnswerSchema,
+});
+
+export const compressedFormSubmissionSchema = z.object({
+  fId: z.number(),
+  qs: z.array(compressedQuestionSchema),
+});
+
+export type CompressedFormSubmission = z.infer<typeof compressedFormSubmissionSchema>

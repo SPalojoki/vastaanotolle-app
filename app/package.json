@@ -11,6 +11,7 @@
     "check": "biome check"
   },
   "dependencies": {
+    "@yudiel/react-qr-scanner": "^2.0.0-beta.3",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
     "react": "^18.3.1",
