@@ -40,5 +40,6 @@ model Option {
   id         Int         @id @default(autoincrement())
   questionId Int
   text       String
+  reportText String?
   question   Question    @relation(fields: [questionId], references: [id])
 }

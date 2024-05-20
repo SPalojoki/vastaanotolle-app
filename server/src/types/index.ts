@@ -8,6 +8,7 @@ export interface ValidatedRequest<T> extends Request {
 // TODO: Check if the schemas should be exported
 export const optionSubmissionSchema = z.object({
 	text: z.string(),
+	reportText: z.string(),
 })
 
 export const questionSubmissionSchema = z.object({

@@ -47,22 +47,23 @@ const getPreDefinedAnswers = async (answerIds: (string | number)[]) => {
   const numericAnswerIds = answerIds.filter((id): id is number => typeof id === 'number');
   return await prisma.option.findMany({
     where: { id: { in: numericAnswerIds } },
-    select: { id: true, text: true },
+    select: { id: true, text: true, reportText: true },
   });
 };
 
 const generateRichSubmission = (
   form: { id: number; title: string },
   questions: { id: number; text: string }[],
-  preDefinedAnswers: { id: number; text: string }[],
+  preDefinedAnswers: { id: number; text: string; reportText: string | null }[],
   decodedAnswers: { fId: number; qs: { qId: number; a: string | number[] }[] }
 ) => {
-  const processAnswer = (answer: string | number[], preDefinedAnswers: { id: number; text: string }[]) => {
+  const processAnswer = (answer: string | number[], preDefinedAnswers: { id: number; text: string; reportText: string | null }[], questionTitle: string) => {
     if (typeof answer === 'string') {
-      return { value: [answer] };
+      return { value: [answer], reportText: answer };
     } else {
       return {
         value: answer.map(a => preDefinedAnswers.find(ans => ans.id === a)?.text).filter(Boolean) as string[],
+        reportText: `${answer.map(a => preDefinedAnswers.find(ans => ans.id === a)?.reportText).filter(Boolean).join(' & ')}`,
       };
     }
   };
@@ -74,7 +75,7 @@ const generateRichSubmission = (
     }
     return {
       ...richQuestion,
-      answer: processAnswer(q.a, preDefinedAnswers),
+      answer: processAnswer(q.a, preDefinedAnswers, richQuestion.text),
     };
   };
 

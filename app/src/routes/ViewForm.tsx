@@ -1,16 +1,23 @@
 import { Scanner } from '@yudiel/react-qr-scanner'
 import axios from 'axios'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { RichQuestion, RichSubmission } from '../types'
 import { isRichSubmission } from '../types/guards'
 
 const ScanQR = ({
   setSubmission,
 }: {
+  submission: RichSubmission | undefined
   setSubmission: React.Dispatch<
     React.SetStateAction<RichSubmission | undefined>
   >
 }) => {
+  // Used to tackle a bug with the scanner component: https://github.com/yudielcurbelo/react-qr-scanner/issues/33
+  const [enabled, setEnabled] = useState(false)
+  useEffect(() => {
+    setEnabled(true)
+  }, [])
+
   const decodeOnServer = async (encodedAnswers: string) => {
     try {
       const { data } = await axios.post('/api/doctor/decode', {
@@ -33,10 +40,14 @@ const ScanQR = ({
       <div className='flex justify-center'>
         <div className='flex h-64 w-64 items-center justify-center rounded-lg border-2 border-indigo-800 bg-white p-4 shadow-lg'>
           <Scanner
-            onResult={(text) => decodeOnServer(text)}
+            onResult={(text) => {
+              setEnabled(false)
+              decodeOnServer(text)
+            }}
+            options={{ delayBetweenScanSuccess: 5000 }}
             onError={(error) => console.error(error?.message)}
             components={{ tracker: true, audio: false }}
-            enabled={true}
+            enabled={enabled}
           />
         </div>
       </div>
@@ -68,25 +79,30 @@ const QuestionCard = ({
   )
 }
 
-const ReviewAnswers = ({
-  submission,
-  setSubmission,
-}: {
-  submission: RichSubmission
-  setSubmission: React.Dispatch<
-    React.SetStateAction<RichSubmission | undefined>
-  >
-}) => {
+const ReviewAnswers = ({ submission }: { submission: RichSubmission }) => {
   return (
-    <div className='grid h-full grid-rows-[auto_1fr]'>
-      <div className='mt-4'>
+    <div className='grid h-full grid-cols-[3fr_1fr] grid-rows-[auto_1fr] gap-4'>
+      <div className='col-span-2 mt-4'>
         <p>Patient form submission</p>
         <h2 className='text-2xl font-bold'>{submission.formTitle}</h2>
       </div>
-      <div className='mt-4 flex flex-col gap-4'>
+      <div className='mtflex flex-col gap-4'>
         {submission.questions.map((question, index) => (
           <QuestionCard key={question.id} question={question} index={index} />
         ))}
+      </div>
+      <div>
+        <div className='rounded-lg bg-white p-4 shadow-md'>
+          <p>
+            {submission.questions.map((question) => (
+              <p key={question.id}>
+                <strong>{question.text}</strong>
+                <br />
+                {question.answer.reportText}
+              </p>
+            ))}
+          </p>
+        </div>
       </div>
     </div>
   )
@@ -101,14 +117,11 @@ const ViewForm = () => {
     <div className='h-full'>
       {submission ? (
         <>
-          <ReviewAnswers
-            submission={submission}
-            setSubmission={setSubmission}
-          />
+          <ReviewAnswers submission={submission} />
         </>
       ) : (
         <>
-          <ScanQR setSubmission={setSubmission} />
+          <ScanQR submission={submission} setSubmission={setSubmission} />
         </>
       )}
     </div>

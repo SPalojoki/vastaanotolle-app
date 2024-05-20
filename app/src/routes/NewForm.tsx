@@ -24,12 +24,16 @@ const QuestionCard = ({
     updateQuestion({ ...details, text: e.target.value })
   }
 
-  const updateOption = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateOption = (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+    keyName: 'text' | 'reportText',
+  ) => {
     if (details.type === 'TEXT') return // Should not be called for TEXT questions
     updateQuestion({
       ...details,
       options: details.options.map((option) =>
-        option.id === id ? { ...option, text: e.target.value } : option,
+        option.id === id ? { ...option, [keyName]: e.target.value } : option,
       ),
     })
   }
@@ -38,7 +42,10 @@ const QuestionCard = ({
     if (details.type === 'TEXT') return // Should not be called for TEXT questions
     updateQuestion({
       ...details,
-      options: [...details.options, { text: '', id: generateId() }],
+      options: [
+        ...details.options,
+        { text: '', reportText: '', id: generateId() },
+      ],
     })
   }
 
@@ -97,13 +104,16 @@ const QuestionCard = ({
                     type='text'
                     value={option.text}
                     onChange={(e) => {
-                      updateOption(option.id, e)
+                      updateOption(option.id, e, 'text')
                     }}
                   />
                   <input
-                    disabled
                     type='text'
                     className='rounded border-2 bg-gray-100 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none'
+                    value={option.reportText}
+                    onChange={(e) => {
+                      updateOption(option.id, e, 'reportText')
+                    }}
                   />
                   <button
                     className='text-sm text-red-500 disabled:cursor-not-allowed disabled:opacity-50'
@@ -145,8 +155,8 @@ const NewForm = () => {
           type,
           text: '',
           options: [
-            { text: '', id: generateId() },
-            { text: '', id: generateId() },
+            { text: '', reportText: '', id: generateId() },
+            { text: '', reportText: '', id: generateId() },
           ],
           id: generateId(),
         },

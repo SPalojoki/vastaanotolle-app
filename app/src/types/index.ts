@@ -14,6 +14,7 @@ export interface LoaderData {
 
 export interface Option {
   text: string
+  reportText: string
   id: number
 }
 
@@ -60,6 +61,7 @@ export type QuestionType = 'TEXT' | 'MULTIPLE_CHOICE' | 'RADIO'
 
 export type RichAnswer = {
   value: string[]
+  reportText: string
 }
 
 export type RichQuestion = {

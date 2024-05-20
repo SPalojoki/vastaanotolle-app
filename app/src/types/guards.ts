@@ -43,6 +43,7 @@ export const isOption = (obj: any): obj is Option =>
   typeof obj === 'object' &&
   obj !== null &&
   typeof obj.text === 'string' &&
+  typeof obj.reportText === 'string' &&
   typeof obj.id === 'number'
 
 export const isTextQuestion = (obj: any): obj is TextQuestion =>
@@ -99,7 +100,8 @@ export const isRichAnswer = (obj: any): obj is RichAnswer =>
   obj !== null &&
   typeof obj === 'object' &&
   Array.isArray(obj.value) &&
-  obj.value.every((item: any) => typeof item === 'string')
+  obj.value.every((item: any) => typeof item === 'string') &&
+  typeof obj.reportText === 'string'
 
 export const isRichQuestion = (obj: any): obj is RichQuestion =>
   obj !== null &&

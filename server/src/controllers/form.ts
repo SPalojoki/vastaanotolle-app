@@ -21,6 +21,7 @@ formRouter.get('/:accessCode', async (req, res) => {
 						select: {
 							id: true,
 							text: true,
+							reportText: true // TODO: Remove this by updating types in the frontend
 						},
 					},
 				},

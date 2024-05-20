@@ -85,6 +85,7 @@ adminRouter.post(
 								question.options && question.type !== 'TEXT'
 									? question.options.map((option) => ({
 											text: option.text,
+											reportText: option.reportText,
 										}))
 									: [],
 						},

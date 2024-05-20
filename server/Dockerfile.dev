@@ -12,4 +12,4 @@ COPY .env /usr/src/app/
 
 COPY --chown=node:node . .
 
-CMD ["npm", "run", "dev:migrate"]
+CMD ["npm", "run", "dev"]
