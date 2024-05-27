@@ -1,16 +1,91 @@
-POST http://localhost:3000/admin/form
+POST http://localhost:80/api/admin/form
 Content-Type: application/json
 
 {
-  "title": "Formtitle",
+  "translations": [
+    {
+      "language": "FI",
+      "title": "Testiformi"
+    },
+    {
+      "language": "SE",
+      "title": "Testform"
+    }
+  ],
   "questions": [
     {
-      "text": "QuestionTitle",
       "type": "TEXT",
+      "translations": [
+        {
+          "language": "FI",
+          "text": "Kysymys",
+          "reportText": "Raporttikysymys"
+        },
+        {
+          "language": "SE",
+          "text": "Fråga",
+          "reportText": "Rapportfråga"
+        }
+      ]
+    },
+    {
+      "type": "MULTIPLE_CHOICE",
+      "answerCount": 3,
       "options": [
-        { "text": "option1" },
-        { "text": "option2" },
-        { "text": "option3" }
+        {
+          "translations": [
+            {
+              "language": "FI",
+              "text": "Vaihtoehto 1",
+              "reportText": "Raporttivaihtoehto 1"
+            },
+            {
+              "language": "SE",
+              "text": "Alternativ 1",
+              "reportText": "Rapportalternativ 1"
+            }
+          ]
+        },
+        {
+          "translations": [
+            {
+              "language": "FI",
+              "text": "Vaihtoehto 2",
+              "reportText": "Raporttivaihtoehto 2"
+            },
+            {
+              "language": "SE",
+              "text": "Alternativ 2",
+              "reportText": "Rapportalternativ 2"
+            }
+          ]
+        },
+        {
+          "translations": [
+            {
+              "language": "FI",
+              "text": "Vaihtoehto 3",
+              "reportText": "Raporttivaihtoehto 3"
+            },
+            {
+              "language": "SE",
+              "text": "Alternativ 3",
+              "reportText": "Rapportalternativ 3"
+            }
+          ]
+        }
+      ],
+      "translations": [
+        {
+          "language": "FI",
+          "text": "Monivalintakysymys",
+          "reportText": "Raporttimonivalintakysymys"
+        },
+        {
+          "language": "SE",
+          "text": "Flervalsfråga",
+          "reportText": "Rapportflervalsfråga"
+        }
       ]
     }
   ]

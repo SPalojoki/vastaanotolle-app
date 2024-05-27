@@ -11,20 +11,37 @@ formRouter.get('/:accessCode', async (req, res) => {
 		},
 		select: {
 			id: true,
-			title: true,
+			translations: {
+				select: {
+					language: true,
+					title: true,
+				},
+			},
 			questions: {
 				select: {
 					id: true,
-					text: true,
 					type: true,
+					answerCount: true,
+					translations: {
+						select: {
+							language: true,
+							text: true,
+							reportText: true,
+						},
+					},
 					options: {
 						select: {
 							id: true,
-							text: true,
-							reportText: true // TODO: Remove this by updating types in the frontend
+							translations: {
+								select: {
+									language: true,
+									text: true,
+									reportText: true,
+								},
+							},
 						},
 					},
-				},
+			}
 			},
 		},
 	})

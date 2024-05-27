@@ -1,25 +1,37 @@
 import axios from 'axios'
-import { Link, useLoaderData } from 'react-router-dom'
-import { isFormArray } from '../types/guards'
-import type { LoaderData, Form } from '../types'
+import { Link } from 'react-router-dom'
+import { FormListing, FormListingArraySchema } from '../types'
+import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { MdAdd } from 'react-icons/md'
 
-export const loader = async () => {
-  const { data } = await axios.get('/api/admin/forms')
-  return { data }
+const useForms = () => {
+  const [forms, setForms] = useState<FormListing[]>([])
+
+  const setFormState = async () => {
+    try {
+      const response = await axios.get('/api/admin/forms')
+      console.log(response)
+      const data = FormListingArraySchema.parse(response.data)
+      setForms(data)
+    } catch (error) {
+      console.error('Failed to fetch forms.', error)
+    }
+  }
+
+  useEffect(() => {
+    setFormState()
+  }, [])
+
+  return { forms }
 }
 
 const Forms = () => {
-  const { data } = useLoaderData() as LoaderData
-
-  if (!isFormArray(data)) {
-    throw new Error('Received malformatted data from the server!')
-  }
+  const { forms } = useForms()
 
   return (
     <div className='w-full'>
-      {data.length === 0 ? (
+      {forms.length === 0 ? (
         <p className='text-center font-light'>No forms created yet.</p>
       ) : (
         <table className='text-md overflow w-full overflow-hidden rounded-lg text-left text-gray-500 shadow-md'>
@@ -34,10 +46,10 @@ const Forms = () => {
             </tr>
           </thead>
           <tbody className='bg-gray-50'>
-            {data.map((form: Form) => (
+            {forms.map((form: FormListing) => (
               <tr key={form.id}>
                 <th className='px-6 py-3 font-medium text-gray-900'>
-                  {form.title}
+                  {form.translations[0].title}
                 </th>
                 <td className='px-6 py-3'>{form.accessCode}</td>
                 <td className='px-6 py-3'>{form.published ? 'Yes' : 'No'}</td>

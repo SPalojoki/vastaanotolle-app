@@ -5,22 +5,34 @@ export interface ValidatedRequest<T> extends Request {
 	validatedBody: T
 }
 
-// TODO: Check if the schemas should be exported
+const languageEnum = z.enum(['FI', 'SE', ])
+
 export const optionSubmissionSchema = z.object({
-	text: z.string(),
-	reportText: z.string(),
+	translations: z.array(z.object({
+		language: languageEnum,
+		text: z.string(),
+		reportText: z.string(),
+	})),
 })
 
 export const questionSubmissionSchema = z.object({
-	text: z.string().min(1),
-	type: z.enum(['MULTIPLE_CHOICE', 'RADIO', 'TEXT']),
-	options: z.array(optionSubmissionSchema).optional(), // .array().min(1),
+	type: z.enum(['MULTIPLE_CHOICE', 'TEXT']),
+	answerCount: z.number().optional(), // Only required for MULTIPLE_CHOICE
+	options: z.array(optionSubmissionSchema).optional(), // Only required for MULTIPLE_CHOICE
+	translations: z.array(z.object({
+		language: languageEnum,
+		text: z.string(),
+		reportText: z.string(),
+	})),
 })
 
 export const formSubmissionSchema = z.object({
-	title: z.string().min(1),
 	questions: z.array(questionSubmissionSchema).min(1),
-})
+	translations: z.array(z.object({
+		language: languageEnum,
+		title: z.string(),
+	})),
+	})
 
 export type FormSubmission = z.infer<typeof formSubmissionSchema>
 

@@ -19,6 +19,7 @@
 	"scripts": {
 		"start": "ts-node src/index.ts",
 		"dev": "nodemon src/index.ts",
+		"dev:migrate": "npx prisma migrate dev && npx prisma generate && npm run dev",
 		"lint": "biome check"
 	}
 }

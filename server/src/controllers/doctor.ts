@@ -32,38 +32,39 @@ doctorRouter.post('/decode', async (req, res) => {
 const getForm = async (formId: number) => {
   return await prisma.form.findUnique({
     where: { id: formId },
-    select: { id: true, title: true },
-  });
+    select: { id: true, translations: { select: { language: true, title: true } },
+  }});
 };
 
 const getQuestions = async (questionIds: number[]) => {
   return await prisma.question.findMany({
     where: { id: { in: questionIds } },
-    select: { id: true, text: true },
-  });
+    select: { id: true, translations: { select: { language: true, text: true, reportText: true } },
+  }});
 };
 
 const getPreDefinedAnswers = async (answerIds: (string | number)[]) => {
   const numericAnswerIds = answerIds.filter((id): id is number => typeof id === 'number');
   return await prisma.option.findMany({
     where: { id: { in: numericAnswerIds } },
-    select: { id: true, text: true, reportText: true },
-  });
+    select: { id: true, translations: { select: { language: true, text: true, reportText: true }},
+  }});
 };
 
+// TODO: Update for multiple languages
 const generateRichSubmission = (
-  form: { id: number; title: string },
-  questions: { id: number; text: string }[],
-  preDefinedAnswers: { id: number; text: string; reportText: string | null }[],
+  form: { id: number; translations: { language: string; title: string }[]},
+  questions: { id: number; translations: { language: string; text: string; reportText: string }[]}[],
+  preDefinedAnswers: { id: number; translations: { language: string; text: string, reportText: string }[]}[],
   decodedAnswers: { fId: number; qs: { qId: number; a: string | number[] }[] }
 ) => {
-  const processAnswer = (answer: string | number[], preDefinedAnswers: { id: number; text: string; reportText: string | null }[], questionTitle: string) => {
+  const processAnswer = (answer: string | number[], preDefinedAnswers: { id: number; translations: { language: string; text: string, reportText: string }[]}[], questionTitle: string) => {
     if (typeof answer === 'string') {
       return { value: [answer], reportText: answer };
     } else {
       return {
-        value: answer.map(a => preDefinedAnswers.find(ans => ans.id === a)?.text).filter(Boolean) as string[],
-        reportText: `${answer.map(a => preDefinedAnswers.find(ans => ans.id === a)?.reportText).filter(Boolean).join(' & ')}`,
+        value: answer.map(a => preDefinedAnswers.find(ans => ans.id === a)?.translations[0].text).filter(Boolean) as string[],
+        reportText: `${answer.map(a => preDefinedAnswers.find(ans => ans.id === a)?.translations[0].reportText).filter(Boolean).join(' & ')}`,
       };
     }
   };
@@ -75,13 +76,13 @@ const generateRichSubmission = (
     }
     return {
       ...richQuestion,
-      answer: processAnswer(q.a, preDefinedAnswers, richQuestion.text),
+      answer: processAnswer(q.a, preDefinedAnswers, richQuestion.translations[0].text),
     };
   };
 
   return {
     formId: form.id,
-    formTitle: form.title,
+    formTitle: form.translations[0].title,
     questions: decodedAnswers.qs.map(q => processQuestion(q)),
   };
 };

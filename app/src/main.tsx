@@ -5,7 +5,7 @@ import './index.css'
 // Routing related
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Admin from './routes/Admin'
-import Forms, { loader as rootLoader } from './routes/Forms'
+import Forms from './routes/Forms'
 import NewForm from './routes/NewForm'
 import Welcome from './routes/Welcome'
 import EndUserWrapper from './routes/EndUserWrapper'
@@ -50,7 +50,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Forms />,
-        loader: rootLoader,
       },
       {
         path: 'form/new',

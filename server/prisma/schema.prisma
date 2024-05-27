@@ -12,34 +12,64 @@ datasource db {
 enum QuestionType {
   TEXT
   MULTIPLE_CHOICE
-  RADIO
+}
+
+enum Language {
+  FI
+  SE
 }
 
 model Form {
-  id         Int         @id @default(autoincrement())
-  title      String
-  questions  Question[]
-  accessCode String      @unique
-  published Boolean      @default(false)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id           Int               @id @default(autoincrement())
+  accessCode   String            @unique
+  published    Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  questions    Question[]
+  translations FormTranslation[]
+}
+
+model FormTranslation {
+  id           Int       @id @default(autoincrement())
+  formId       Int
+  language     Language
+  title        String
+  form         Form      @relation(fields: [formId], references: [id])
 }
 
 model Question {
-  id         Int         @id @default(autoincrement())
-  formId     Int
-  text       String
-  type       QuestionType
-  options    Option[]
-  form       Form        @relation(fields: [formId], references: [id])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id           Int                 @id @default(autoincrement())
+  formId       Int
+  type         QuestionType
+  answerCount  Int?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  form         Form                @relation(fields: [formId], references: [id])
+  options      Option[]
+  translations QuestionTranslation[]
+}
+
+model QuestionTranslation {
+  id           Int        @id @default(autoincrement())
+  questionId   Int
+  language     Language
+  text         String
+  reportText   String
+  question     Question   @relation(fields: [questionId], references: [id])
 }
 
 model Option {
-  id         Int         @id @default(autoincrement())
-  questionId Int
-  text       String
-  reportText String?
-  question   Question    @relation(fields: [questionId], references: [id])
+  id           Int             @id @default(autoincrement())
+  questionId   Int
+  question     Question        @relation(fields: [questionId], references: [id])
+  translations OptionTranslation[]
+}
+
+model OptionTranslation {
+  id           Int        @id @default(autoincrement())
+  optionId     Int
+  language     Language
+  text         String
+  reportText   String
+  option       Option      @relation(fields: [optionId], references: [id])
 }

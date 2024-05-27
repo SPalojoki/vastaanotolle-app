@@ -28,7 +28,11 @@ const generateAccessCode = async (length: number): Promise<string> => {
 }
 
 adminRouter.get('/forms', async (_req, res) => {
-	const forms = await prisma.form.findMany()
+	const forms = await prisma.form.findMany({
+		include: {
+			translations: true,
+		},
+	})
 
 	return res.status(200).json(forms)
 })
@@ -47,9 +51,11 @@ adminRouter.get('/form/:id', async (req, res) => {
 			id,
 		},
 		include: {
+			translations: true,
 			questions: {
 				include: {
 					options: true,
+					translations: true,
 				},
 			},
 		},
@@ -74,22 +80,40 @@ adminRouter.post(
 
 		const newForm = await prisma.form.create({
 			data: {
-				title: formSubmission.title,
 				accessCode: accessCode,
+				published: true,
+				translations: {
+					create: formSubmission.translations.map((translation) => ({
+						language: translation.language,
+						title: translation.title,
+					}),
+					),
+				},
 				questions: {
 					create: formSubmission.questions.map((question) => ({
-						text: question.text,
 						type: question.type,
-						options: {
-							create:
-								question.options && question.type !== 'TEXT'
-									? question.options.map((option) => ({
-											text: option.text,
-											reportText: option.reportText,
-										}))
-									: [],
+						answerCount: question.answerCount,
+						translations: {
+							create: question.translations.map((translation) => ({
+								language: translation.language,
+								text: translation.text,
+								reportText: translation.reportText,
+							}),
+							),
 						},
-					})),
+						options: question.type === 'MULTIPLE_CHOICE' ? {
+							create: question.options?.map((option) => ({
+								translations: {
+									create: option.translations.map((translation) => ({
+										language: translation.language,
+										text: translation.text,
+										reportText: translation.reportText,
+									}),
+									),
+								},
+							}),
+							)} : undefined,
+					}))
 				},
 			},
 		})
