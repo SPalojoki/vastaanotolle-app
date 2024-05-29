@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { MdArrowForward } from 'react-icons/md'
 import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const codeLength = 4
 
@@ -39,6 +40,7 @@ const InputCode = () => {
   const [error, setError] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const focusInput = () => {
     if (inputRef.current !== null) {
@@ -60,7 +62,7 @@ const InputCode = () => {
       navigate(`/${code}`, { state: { data: response.data } })
     } catch (error: unknown) {
       if (error instanceof AxiosError && error.response?.status === 404) {
-        setError('Form not found')
+        setError(t('formNotFound'))
         setCode('')
         focusInput()
       } else {
@@ -101,6 +103,7 @@ const InputCode = () => {
 }
 
 const Welcome = () => {
+  const { t } = useTranslation()
   return (
     <div className='grid grid-rows-[2fr_1fr] place-items-center md:mt-4 md:grid-cols-[1fr_1fr] md:grid-rows-1 md:rounded-md md:bg-indigo-50 md:shadow-md'>
       <img
@@ -111,7 +114,7 @@ const Welcome = () => {
         <h1 className='md:text-md hidden md:block lg:text-xl'>
           Vastaanotolle.fi
         </h1>
-        <p className='text-2xl font-bold'>Enter the form code</p>
+        <p className='text-2xl font-bold'>{t('enterCode')}</p>
         <InputCode />
       </div>
     </div>

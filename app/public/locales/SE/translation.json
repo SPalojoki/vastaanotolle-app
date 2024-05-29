@@ -1,0 +1,16 @@
+{
+  "welcome": "Välkommen!",
+  "youWillBeAsked": "Du kommer att ställas inför en serie frågor för att påskynda ditt kommande möte.",
+  "begin": "Börja",
+  "loading": "Laddar",
+  "letsReview": "Låt oss gå igenom dina svar (tillgängligt senare)",
+  "question": "Fråga",
+  "typeYourAnswer": "Skriv ditt svar här...",
+  "generate": "Generera",
+  "allSet": "Allt är klart!",
+  "hereIsYourQR": "Här är din QR-kod",
+  "missingPayload": "Information saknas. Vänligen skicka in formuläret igen.",
+  "enterCode": "Ange formulärkoden",
+  "startOver": "Börja om",
+  "formNotFound": "Formulär ej hittat"
+}

@@ -1,0 +1,16 @@
+{
+  "welcome": "Welcome!",
+  "youWillBeAsked": "You will be asked a series of questions to speed up your upcoming appointment.",
+  "begin": "Begin",
+  "loading": "Loading",
+  "letsReview": "Now, let's review... (available later)",
+  "question": "Question",
+  "typeYourAnswer": "Type your answer here...",
+  "generate": "Generate",
+  "allSet": "You are all set!",
+  "hereIsYourQR": "Here is your QR code",
+  "missingPayload": "Payload missing. Please resubmit the form.",
+  "enterCode": "Enter the form code",
+  "startOver": "Start over",
+  "formNotFound": "Form not found"
+}

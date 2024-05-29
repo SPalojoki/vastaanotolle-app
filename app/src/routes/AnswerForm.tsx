@@ -12,6 +12,7 @@ import {
 } from '../types'
 import PatientButton from '../components/PatientButton'
 import { MdArrowForward, MdArrowBack, MdCheck, MdQrCode2 } from 'react-icons/md'
+import { useTranslation } from 'react-i18next'
 
 const useForm = () => {
   const location = useLocation()
@@ -105,12 +106,14 @@ const TextAnswerField = ({
   value: string
   updateAnswer: (answer: string) => void
 }) => {
+  const { t } = useTranslation()
+
   return (
     <textarea
       className='h-60 w-full rounded-lg border-l-4 border-indigo-300 bg-indigo-200 p-2 transition-all focus:border-indigo-500 focus:outline-none'
       value={value}
       onChange={(e) => updateAnswer(e.target.value)}
-      placeholder='Type your answer here...'
+      placeholder={t('typeYourAnswer')}
     />
   )
 }
@@ -190,6 +193,7 @@ const AnswerForm = () => {
   const navigate = useNavigate()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(-1)
   const { formData, updateAnswer } = useForm()
+  const { t } = useTranslation()
 
   const encodeAndProceed = () => {
     if (!formData) return
@@ -212,7 +216,7 @@ const AnswerForm = () => {
           currentQuestionIndex < formData.questions.length ? (
             <div className='grid h-full grid-rows-[auto_1fr] p-2'>
               <p className='text-center font-thin'>
-                Question {currentQuestionIndex + 1} out of
+                {t('question')} {currentQuestionIndex + 1} /
                 {' ' + formData.questions.length}
               </p>
               <AnswerQuestion
@@ -247,9 +251,9 @@ const AnswerForm = () => {
             </div>
           ) : (
             <div className='flex h-full flex-col items-center justify-around gap-4'>
-              Now, let's review... (available later)
+              {t('letsReview')}
               <div>
-                <PatientButton text={'Generate'} onClick={encodeAndProceed}>
+                <PatientButton text={t('generate')} onClick={encodeAndProceed}>
                   <MdQrCode2 />
                 </PatientButton>
               </div>
@@ -257,19 +261,16 @@ const AnswerForm = () => {
           )
         ) : (
           <div className='grid h-full grid-rows-[1fr_4fr_2fr] items-center text-center'>
-            <p className='font-thin'>Welcome!</p>
+            <p className='font-thin'>{t('welcome')}</p>
             <div>
               <p className='text-2xl font-bold'>
                 {formData.translations[0].title}
               </p>
-              <p className='text-md mt-2'>
-                You will be asked a series of questions to speed up your
-                upcoming appointment.
-              </p>
+              <p className='text-md mt-2'>{t('youWillBeAsked')}</p>
             </div>
             <div className='flex justify-center'>
               <PatientButton
-                text={'Begin'}
+                text={t('begin')}
                 onClick={() => setCurrentQuestionIndex(0)}
               >
                 <MdArrowForward />
@@ -278,7 +279,7 @@ const AnswerForm = () => {
           </div>
         )
       ) : (
-        <div className='text-center'>Loading...</div>
+        <div className='text-center'>{t('loading')}...</div>
       )}
     </>
   )

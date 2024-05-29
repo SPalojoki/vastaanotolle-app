@@ -1,0 +1,16 @@
+{
+  "welcome": "Tervetuloa!",
+  "youWillBeAsked": "Sinulta kysytään useita kysymyksiä tulevan tapaamisesi nopeuttamiseksi.",
+  "begin": "Aloita",
+  "loading": "Ladataan",
+  "letsReview": "Käydään vielä vastauksesi läpi (saatavilla myöhemmin)",
+  "question": "Kysymys",
+  "typeYourAnswer": "Kirjoita vastauksesi tähän...",
+  "generate": "Luo",
+  "allSet": "Kaikki on valmista!",
+  "hereIsYourQR": "Tässä on QR-koodisi",
+  "missingPayload": "Tietoja puuttuu. Ole hyvä ja lähetä lomake uudelleen.",
+  "enterCode": "Anna lomakekoodi",
+  "startOver": "Aloita alusta",
+  "formNotFound": "Lomaketta ei löytynyt"
+}

@@ -12,6 +12,7 @@ import EndUserWrapper from './routes/EndUserWrapper'
 import AnswerForm from './routes/AnswerForm'
 import GenerateQR from './routes/GenerateQR'
 import ViewForm from './routes/ViewForm'
+import './i18n'
 
 const router = createBrowserRouter([
   {
