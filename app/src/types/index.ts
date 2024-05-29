@@ -47,9 +47,11 @@ export const OptionSchema = z.object({
   id: z.number(), // Used for react key
 })
 
+export type Option = z.infer<typeof OptionSchema>
+
 export const ChoiceQuestionSchema = z.object({
   translations: z.array(QandAnsTranslationSchema),
-  type: z.enum(['MULTIPLE_CHOICE', 'TEXT']),
+  type: z.enum(['MULTIPLE_CHOICE']),
   answerCount: z.number(),
   options: z.array(OptionSchema),
   id: z.number(), // Used for react key
@@ -74,48 +76,42 @@ export const FormSchema = z.object({
 export type Form = z.infer<typeof FormSchema>
 export type Question = z.infer<typeof QuestionSchema>
 
-export interface Option {
-  text: string
-  reportText: string
-  id: number
-}
+export const FetchedFormSchema = FormSchema.extend({
+  id: z.number(),
+})
 
-interface QuestionBase {
-  text: string
-  id: number
-}
-export interface TextQuestion extends QuestionBase {
-  type: 'TEXT'
-}
+export type FetchedForm = z.infer<typeof FetchedFormSchema>
 
-export interface ChoiceQuestion extends QuestionBase {
-  type: 'MULTIPLE_CHOICE' | 'RADIO'
-  options: Option[]
-}
+export const ChoiceQuestionWithAnswerSchema = ChoiceQuestionSchema.extend({
+  answer: z.array(z.number()),
+})
 
-export interface NewFormItems {
-  title: string
-  questions: Question[]
-}
-export interface FormItems extends NewFormItems {
-  id: number
-}
+export type ChoiceQuestionWithAnswer = z.infer<
+  typeof ChoiceQuestionWithAnswerSchema
+>
 
-export interface AnswerFormItems extends Omit<FormItems, 'questions'> {
-  questions: QuestionWithAnswer[]
-}
+export const TextQuestionWithAnswerSchema = TextQuestionSchema.extend({
+  answer: z.string(),
+})
 
-export interface ChoiceQuestionWithAnswer extends ChoiceQuestion {
-  answer: number[]
-}
+export type TextQuestionWithAnswer = z.infer<
+  typeof TextQuestionWithAnswerSchema
+>
 
-export interface TextQuestionWithAnswer extends TextQuestion {
-  answer: string
-}
+export const QuestionWithAnswerSchema = z.union([
+  ChoiceQuestionWithAnswerSchema,
+  TextQuestionWithAnswerSchema,
+])
 
-export type QuestionWithAnswer =
-  | TextQuestionWithAnswer
-  | ChoiceQuestionWithAnswer
+export type QuestionWithAnswer = z.infer<typeof QuestionWithAnswerSchema>
+
+export const FetchedFormWithAnswersSchema = FetchedFormSchema.extend({
+  questions: z.array(QuestionWithAnswerSchema),
+})
+
+export type FetchedFormWithAnswers = z.infer<
+  typeof FetchedFormWithAnswersSchema
+>
 
 export type QuestionType = 'TEXT' | 'MULTIPLE_CHOICE' | 'RADIO'
 

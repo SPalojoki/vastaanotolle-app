@@ -2,27 +2,114 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import {
-  AnswerFormItems,
-  FormItems,
-  Option,
+  FetchedForm,
+  FetchedFormSchema,
+  FetchedFormWithAnswers,
+  TextQuestionWithAnswer,
+  ChoiceQuestionWithAnswer,
   QuestionWithAnswer,
+  Option,
 } from '../types'
-import { isAnswerFormItems, isFormItems } from '../types/guards'
 import PatientButton from '../components/PatientButton'
 import { MdArrowForward, MdArrowBack, MdCheck, MdQrCode2 } from 'react-icons/md'
 
+const useForm = () => {
+  const location = useLocation()
+  const { code } = useParams()
+  const [formData, setFormData] = useState<FetchedFormWithAnswers | undefined>(
+    undefined,
+  )
+
+  // Adds an answer field to the questions in fetched form
+  const initAnswers = (fetchedForm: FetchedForm) => {
+    const fetchedFormWithAnswers: FetchedFormWithAnswers = {
+      ...fetchedForm,
+      questions: fetchedForm.questions.map((question) => {
+        if (question.type === 'TEXT') {
+          return {
+            ...question,
+            answer: '',
+          } as TextQuestionWithAnswer
+        } else if (question.type === 'MULTIPLE_CHOICE') {
+          return {
+            ...question,
+            answer: [],
+          } as ChoiceQuestionWithAnswer
+        } else {
+          throw new Error('Invalid question type')
+        }
+      }),
+    }
+
+    return fetchedFormWithAnswers
+  }
+
+  const initFormData = async () => {
+    try {
+      // Checks if the form data is already fetched in the code entry page
+      const fetchedForms = FetchedFormSchema.parse(location.state?.data)
+      setFormData(initAnswers(fetchedForms))
+    } catch {
+      const response = await axios.get('/api/form/' + code)
+      setFormData(initAnswers(FetchedFormSchema.parse(response.data)))
+    }
+  }
+
+  const updateAnswer = (
+    questionId: number,
+    updatedAnswer: string | number[],
+  ) => {
+    if (!formData) {
+      throw new Error('Form is not fetched yet!')
+    }
+
+    setFormData({
+      ...formData,
+      questions: formData.questions.map((question) => {
+        if (question.id === questionId) {
+          if (question.type === 'TEXT' && typeof updatedAnswer === 'string') {
+            return {
+              ...question,
+              answer: updatedAnswer,
+            }
+          } else if (
+            question.type === 'MULTIPLE_CHOICE' &&
+            Array.isArray(updatedAnswer) &&
+            updatedAnswer.every((optionId) => typeof optionId === 'number')
+          ) {
+            return {
+              ...question,
+              answer: updatedAnswer,
+            }
+          } else {
+            throw new Error('Invalid answer type')
+          }
+        } else {
+          return question
+        }
+      }),
+    })
+  }
+
+  useEffect(() => {
+    initFormData()
+  }, [])
+
+  return { formData, updateAnswer }
+}
+
 const TextAnswerField = ({
   value,
-  onChange,
+  updateAnswer,
 }: {
   value: string
-  onChange: (answer: string) => void
+  updateAnswer: (answer: string) => void
 }) => {
   return (
     <textarea
       className='h-60 w-full rounded-lg border-l-4 border-indigo-300 bg-indigo-200 p-2 transition-all focus:border-indigo-500 focus:outline-none'
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => updateAnswer(e.target.value)}
       placeholder='Type your answer here...'
     />
   )
@@ -31,25 +118,24 @@ const TextAnswerField = ({
 const ChoiceQuestionOptions = ({
   options,
   answers,
-  type,
+  answerCount,
   updateAnswers,
 }: {
   options: Option[]
   answers: number[]
-  type: 'MULTIPLE_CHOICE' | 'RADIO'
+  answerCount: number
   updateAnswers: (updated: number[]) => void
 }) => {
-  const updateAnswer = (id: number) => {
-    if (type === 'RADIO') {
-      updateAnswers([id])
-    } else {
-      if (answers.includes(id)) {
-        updateAnswers(answers.filter((answer) => answer !== id))
-      } else {
-        updateAnswers([...answers, id])
-      }
+  const updateAnswer = (optionId: number) => {
+    const newAnswers = new Set(answers)
+    if (newAnswers.has(optionId)) {
+      newAnswers.delete(optionId)
+    } else if (newAnswers.size < answerCount) {
+      newAnswers.add(optionId)
     }
+    updateAnswers(Array.from(newAnswers))
   }
+
   // TODO: Fix HTML semantics (for screen readers etc.)
   return (
     <div className='flex flex-col gap-4'>
@@ -62,14 +148,9 @@ const ChoiceQuestionOptions = ({
           <p className='w-12 bg-indigo-300 p-4 text-center font-bold'>
             {index + 1}
           </p>
-          <p>{option.text}</p>
+          <p>{option.translations[0].text}</p>
         </div>
       ))}
-      <p className='text-center font-thin'>
-        {type === 'RADIO'
-          ? 'You can select only one option.'
-          : 'You can select multiple options.'}
-      </p>
     </div>
   )
 }
@@ -79,25 +160,25 @@ const AnswerQuestion = ({
   updateAnswer,
 }: {
   question: QuestionWithAnswer
-  updateAnswer: (answer: QuestionWithAnswer) => void
+  updateAnswer: (updatedAnswer: string | number[]) => void
 }) => {
   return (
     <div className='grid grid-rows-[1fr_4fr_2fr] items-center'>
-      <h2 className='self-end text-3xl font-bold'>{question.text}</h2>
+      <h2 className='self-end text-3xl font-bold'>
+        {question.translations[0].text}
+      </h2>
       <div>
         {question.type === 'TEXT' ? (
           <TextAnswerField
             value={question.answer}
-            onChange={(answer: string) => updateAnswer({ ...question, answer })}
+            updateAnswer={updateAnswer}
           />
         ) : (
           <ChoiceQuestionOptions
-            type={question.type}
             options={question.options}
             answers={question.answer}
-            updateAnswers={(updated: number[]) =>
-              updateAnswer({ ...question, answer: updated })
-            }
+            answerCount={question.answerCount}
+            updateAnswers={updateAnswer}
           />
         )}
       </div>
@@ -106,83 +187,9 @@ const AnswerQuestion = ({
 }
 
 const AnswerForm = () => {
-  const location = useLocation()
   const navigate = useNavigate()
-  const { code } = useParams()
-  const [formData, setFormData] = useState<AnswerFormItems | undefined>(
-    undefined,
-  )
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(-1)
-
-  // TODO: Centralize fetching logics outside the components
-  useEffect(() => {
-    const initFormData = async () => {
-      let fetchedData: FormItems
-
-      if (location.state?.data || isFormItems(location.state?.data)) {
-        fetchedData = location.state.data
-      } else {
-        try {
-          const response = await axios.get('api/form/' + code)
-          const data = response.data
-          if (isFormItems(data)) {
-            fetchedData = data
-          } else {
-            throw new Error('Invalid data')
-          }
-        } catch (e) {
-          console.error(e)
-          return
-        }
-      }
-      const modifiedData = {
-        ...fetchedData,
-        questions: fetchedData.questions.map((question) => ({
-          ...question,
-          answer: question.type === 'TEXT' ? '' : [],
-        })),
-      }
-
-      if (isAnswerFormItems(modifiedData)) {
-        setFormData(modifiedData)
-        console.log(modifiedData)
-      } else {
-        console.error('Invalid data')
-      }
-    }
-    initFormData()
-  }, [])
-
-  // TODO: Implement the logic for checking if the user can proceed to the next question
-  const canProceed = () => {
-    return true
-  }
-
-  const updateChoiceQuestionAnswer = (
-    questionId: number,
-    updatedQuestion: QuestionWithAnswer,
-  ) => {
-    if (!formData) return
-
-    const isMatchingType = (
-      question: typeof updatedQuestion,
-      updatedType: string,
-    ) => {
-      return question.id === questionId && question.type === updatedType
-    }
-
-    const updatedFormData: AnswerFormItems = {
-      ...formData,
-      questions: formData.questions.map((question) => {
-        if (isMatchingType(question, updatedQuestion.type)) {
-          return updatedQuestion
-        }
-        return question
-      }),
-    }
-
-    setFormData(updatedFormData)
-  }
+  const { formData, updateAnswer } = useForm()
 
   const encodeAndProceed = () => {
     if (!formData) return
@@ -210,8 +217,8 @@ const AnswerForm = () => {
               </p>
               <AnswerQuestion
                 question={formData.questions[currentQuestionIndex]}
-                updateAnswer={(updatedAnswer: QuestionWithAnswer) =>
-                  updateChoiceQuestionAnswer(
+                updateAnswer={(updatedAnswer: string | number[]) =>
+                  updateAnswer(
                     formData.questions[currentQuestionIndex].id,
                     updatedAnswer,
                   )
@@ -229,7 +236,6 @@ const AnswerForm = () => {
                   onClick={() =>
                     setCurrentQuestionIndex(currentQuestionIndex + 1)
                   }
-                  disabled={!canProceed()}
                 >
                   {currentQuestionIndex === formData.questions.length - 1 ? (
                     <MdCheck />
@@ -253,7 +259,9 @@ const AnswerForm = () => {
           <div className='grid h-full grid-rows-[1fr_4fr_2fr] items-center text-center'>
             <p className='font-thin'>Welcome!</p>
             <div>
-              <p className='text-2xl font-bold'>{formData.title}</p>
+              <p className='text-2xl font-bold'>
+                {formData.translations[0].title}
+              </p>
               <p className='text-md mt-2'>
                 You will be asked a series of questions to speed up your
                 upcoming appointment.
