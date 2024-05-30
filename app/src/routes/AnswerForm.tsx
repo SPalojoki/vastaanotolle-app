@@ -17,9 +17,13 @@ import { useTranslation } from 'react-i18next'
 const useForm = () => {
   const location = useLocation()
   const { code } = useParams()
+  const { i18n } = useTranslation()
   const [formData, setFormData] = useState<FetchedFormWithAnswers | undefined>(
     undefined,
   )
+  const [formDataTranslated, setFormDataTranslated] = useState<
+    FetchedFormWithAnswers | undefined
+  >(undefined)
 
   // Adds an answer field to the questions in fetched form
   const initAnswers = (fetchedForm: FetchedForm) => {
@@ -92,11 +96,55 @@ const useForm = () => {
     })
   }
 
+  const updateWithTranslation = () => {
+    if (!formData) {
+      throw new Error('Form is not fetched yet!')
+    }
+    const translatedFormData: FetchedFormWithAnswers = {
+      ...formData,
+      translations: [
+        formData.translations.find((t) => t.language === i18n.language) ||
+          formData.translations[0],
+      ],
+      questions: formData.questions.map((question) => {
+        return {
+          ...question,
+          translations: [
+            question.translations.find((t) => t.language === i18n.language) ||
+              question.translations[0],
+          ],
+          ...(question.type === 'MULTIPLE_CHOICE'
+            ? {
+                options: question.options.map((option) => {
+                  return {
+                    ...option,
+                    translations: [
+                      option.translations.find(
+                        (t) => t.language === i18n.language,
+                      ) || option.translations[0],
+                    ],
+                  }
+                }),
+              }
+            : {}),
+        }
+      }),
+    }
+
+    setFormDataTranslated(translatedFormData)
+  }
+
   useEffect(() => {
     initFormData()
   }, [])
 
-  return { formData, updateAnswer }
+  useEffect(() => {
+    if (formData) {
+      updateWithTranslation()
+    }
+  }, [formData, i18n.language])
+
+  return { formData, formDataTranslated, updateAnswer }
 }
 
 const TextAnswerField = ({
@@ -192,7 +240,7 @@ const AnswerQuestion = ({
 const AnswerForm = () => {
   const navigate = useNavigate()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(-1)
-  const { formData, updateAnswer } = useForm()
+  const { formData, formDataTranslated, updateAnswer } = useForm()
   const { t } = useTranslation()
 
   const encodeAndProceed = () => {
@@ -211,19 +259,19 @@ const AnswerForm = () => {
 
   return (
     <>
-      {formData ? (
+      {formDataTranslated ? (
         currentQuestionIndex >= 0 ? (
-          currentQuestionIndex < formData.questions.length ? (
+          currentQuestionIndex < formDataTranslated.questions.length ? (
             <div className='grid h-full grid-rows-[auto_1fr] p-2'>
               <p className='text-center font-thin'>
                 {t('question')} {currentQuestionIndex + 1} /
-                {' ' + formData.questions.length}
+                {' ' + formDataTranslated.questions.length}
               </p>
               <AnswerQuestion
-                question={formData.questions[currentQuestionIndex]}
+                question={formDataTranslated.questions[currentQuestionIndex]}
                 updateAnswer={(updatedAnswer: string | number[]) =>
                   updateAnswer(
-                    formData.questions[currentQuestionIndex].id,
+                    formDataTranslated.questions[currentQuestionIndex].id,
                     updatedAnswer,
                   )
                 }
@@ -241,7 +289,8 @@ const AnswerForm = () => {
                     setCurrentQuestionIndex(currentQuestionIndex + 1)
                   }
                 >
-                  {currentQuestionIndex === formData.questions.length - 1 ? (
+                  {currentQuestionIndex ===
+                  formDataTranslated.questions.length - 1 ? (
                     <MdCheck />
                   ) : (
                     <MdArrowForward />
@@ -264,7 +313,7 @@ const AnswerForm = () => {
             <p className='font-thin'>{t('welcome')}</p>
             <div>
               <p className='text-2xl font-bold'>
-                {formData.translations[0].title}
+                {formDataTranslated.translations[0].title}
               </p>
               <p className='text-md mt-2'>{t('youWillBeAsked')}</p>
             </div>
