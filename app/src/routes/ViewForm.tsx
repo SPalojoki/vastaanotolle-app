@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { RichSubmission, RichQuestion, RichSubmissionSchema } from '../types'
 import { useTranslation } from 'react-i18next'
+import CopyTextarea from '../components/CopyTextArea'
 
 const useSubmission = () => {
   const { i18n } = useTranslation()
@@ -13,6 +14,7 @@ const useSubmission = () => {
   const [submissionTranslated, setSubmissionTranslated] = useState<
     RichSubmission | undefined
   >(undefined)
+  const [reportText, setReportText] = useState<string>('')
 
   const processSubmission = async (submissionString: string) => {
     try {
@@ -31,9 +33,6 @@ const useSubmission = () => {
       throw new Error('Submission is not scanned yet!')
     }
 
-    console.log('original:', submission)
-    console.log('Translating submission: ', i18n.language)
-
     const translatedSubmission = {
       ...submission,
       translations: [
@@ -46,6 +45,11 @@ const useSubmission = () => {
         if (question.type === 'MULTIPLE_CHOICE') {
           return {
             ...question,
+            translations: [
+              question.translations.find(
+                (translation) => translation.language === i18n.language,
+              ) || question.translations[0],
+            ],
             answer: question.answer.map((answer) => ({
               ...answer,
               translations: [
@@ -55,18 +59,50 @@ const useSubmission = () => {
               ],
             })),
           }
-        } else return question
+        } else {
+          return {
+            ...question,
+            translations: [
+              question.translations.find(
+                (translation) => translation.language === i18n.language,
+              ) || question.translations[0],
+            ],
+          }
+        }
       }),
     }
     setSubmissionTranslated(translatedSubmission)
-    console.log(translatedSubmission)
+  }
+
+  const formulateReportText = () => {
+    if (!submissionTranslated) {
+      throw new Error('Submission is missing!')
+    }
+
+    const reportPieces: string[] = []
+
+    submissionTranslated.questions.forEach((q) => {
+      reportPieces.push(q.translations[0].reportText)
+      if (q.type === 'MULTIPLE_CHOICE') {
+        q.answer.forEach((a) => {
+          reportPieces.push(a.translations[0].reportText)
+        })
+      } else {
+        reportPieces.push(q.answer.text)
+      }
+    })
+    setReportText(reportPieces.join(' '))
   }
 
   useEffect(() => {
-    translateSubmission()
+    if (submission) translateSubmission()
   }, [submission, i18n.language])
 
-  return { submission, processSubmission, submissionTranslated }
+  useEffect(() => {
+    if (submissionTranslated) formulateReportText()
+  }, [submissionTranslated])
+
+  return { processSubmission, submissionTranslated, reportText, setReportText }
 }
 
 const ScanQR = ({
@@ -149,8 +185,12 @@ const QuestionCard = ({
 
 const ReviewAnswers = ({
   submissionTranslated,
+  reportText,
+  setReportText,
 }: {
   submissionTranslated: RichSubmission
+  reportText: string
+  setReportText: React.Dispatch<React.SetStateAction<string>>
 }) => {
   const { t } = useTranslation()
   return (
@@ -167,28 +207,25 @@ const ReviewAnswers = ({
         ))}
       </div>
       <div>
-        <div className='rounded-lg bg-white p-4 shadow-md'>
-          {submissionTranslated.questions.map((question) => (
-            <p key={question.id}>
-              <strong>{question.translations[0].text}</strong>
-              <br />
-              {question.translations[0].reportText}
-            </p>
-          ))}
-        </div>
+        <CopyTextarea value={reportText} setValue={setReportText} />
       </div>
     </div>
   )
 }
 
 const ViewForm = () => {
-  const { submissionTranslated, processSubmission } = useSubmission()
+  const { submissionTranslated, processSubmission, reportText, setReportText } =
+    useSubmission()
 
   return (
     <div className='h-full'>
       {submissionTranslated ? (
         <>
-          <ReviewAnswers submissionTranslated={submissionTranslated} />
+          <ReviewAnswers
+            submissionTranslated={submissionTranslated}
+            reportText={reportText}
+            setReportText={setReportText}
+          />
         </>
       ) : (
         <>
