@@ -12,5 +12,10 @@
   "missingPayload": "Payload missing. Please resubmit the form.",
   "enterCode": "Enter the form code",
   "startOver": "Start over",
-  "formNotFound": "Form not found"
+  "formNotFound": "Form not found",
+  "readyToScan": "Ready to scan",
+  "readQR": "Read the QR code to review patient answers.",
+  "patientFormSubmission": "Patient form submission",
+  "multipleChoiceQuestion": "Multiple choice question",
+  "textQuestion": "Free text question"
 }

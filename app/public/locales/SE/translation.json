@@ -12,5 +12,10 @@
   "missingPayload": "Information saknas. Vänligen skicka in formuläret igen.",
   "enterCode": "Ange formulärkoden",
   "startOver": "Börja om",
-  "formNotFound": "Formulär ej hittat"
+  "formNotFound": "Formulär ej hittat",
+  "readyToScan": "Färdig att skanna",
+  "readQR": "Läs QR-koden för att granska patientens svar.",
+  "patientFormSubmission": "Patientformulärets inskickning",
+  "multipleChoiceQuestion": "Flervalsfråga",
+  "textQuestion": "Fri textfråga"
 }

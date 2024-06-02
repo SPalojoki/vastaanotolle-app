@@ -247,10 +247,11 @@ const AnswerForm = () => {
     if (!formData) return
 
     const compressedPayload = {
-      fId: formData.id,
+      fId: formData.id, // Form ID
       qs: formData.questions.map((question) => ({
-        qId: question.id,
-        a: question.answer,
+        // Questions
+        qId: question.id, // Question ID
+        a: question.answer, // Answer
       })),
     }
 

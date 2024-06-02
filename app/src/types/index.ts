@@ -113,21 +113,55 @@ export type FetchedFormWithAnswers = z.infer<
   typeof FetchedFormWithAnswersSchema
 >
 
-export type QuestionType = 'TEXT' | 'MULTIPLE_CHOICE' | 'RADIO'
+export const RichChoiceAnswerSchema = z.object({
+  type: z.literal('MULTIPLE_CHOICE'),
+  translations: z.array(QandAnsTranslationSchema),
+})
 
-export type RichAnswer = {
-  value: string[]
-  reportText: string
-}
+export type RichChoiceAnswer = z.infer<typeof RichChoiceAnswerSchema>
 
-export type RichQuestion = {
-  id: number
-  text: string
-  answer: RichAnswer
-}
+export const RichTextAnswerSchema = z.object({
+  type: z.literal('TEXT'),
+  text: z.string(),
+})
 
-export type RichSubmission = {
-  formId: number
-  formTitle: string
-  questions: RichQuestion[]
-}
+export type RichTextAnswer = z.infer<typeof RichTextAnswerSchema>
+
+export const RichAnswerSchema = z.union([
+  RichChoiceAnswerSchema,
+  RichTextAnswerSchema,
+])
+
+export type RichAnswer = z.infer<typeof RichAnswerSchema>
+
+export const RichTextQuestionSchema = z.object({
+  id: z.number(),
+  type: z.literal('TEXT'),
+  translations: z.array(QandAnsTranslationSchema),
+  answer: RichTextAnswerSchema,
+})
+
+export type RichTextQuestion = z.infer<typeof RichTextQuestionSchema>
+
+export const RichChoiceQuestionSchema = z.object({
+  id: z.number(),
+  type: z.literal('MULTIPLE_CHOICE'),
+  translations: z.array(QandAnsTranslationSchema),
+  answer: z.array(RichChoiceAnswerSchema),
+})
+
+export type RichChoiceQuestion = z.infer<typeof RichChoiceQuestionSchema>
+
+export const RichQuestionSchema = z.union([
+  RichTextQuestionSchema,
+  RichChoiceQuestionSchema,
+])
+
+export type RichQuestion = z.infer<typeof RichQuestionSchema>
+
+export const RichSubmissionSchema = z.object({
+  translations: z.array(FormTranslationSchema),
+  questions: z.array(RichQuestionSchema),
+})
+
+export type RichSubmission = z.infer<typeof RichSubmissionSchema>

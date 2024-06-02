@@ -36,13 +36,16 @@ export const formSubmissionSchema = z.object({
 
 export type FormSubmission = z.infer<typeof formSubmissionSchema>
 
+const compressedAnswerSchema = z.union([z.string(), z.array(z.number())]);
 
-const compressedAnswerSchema = z.union([z.array(z.number()), z.string()]);
+export type CompressedAnswer = z.infer<typeof compressedAnswerSchema>
 
 const compressedQuestionSchema = z.object({
   qId: z.number(),
   a: compressedAnswerSchema,
 });
+
+export type CompressedQuestion = z.infer<typeof compressedQuestionSchema>
 
 export const compressedFormSubmissionSchema = z.object({
   fId: z.number(),

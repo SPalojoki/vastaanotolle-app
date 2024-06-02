@@ -12,5 +12,10 @@
   "missingPayload": "Tietoja puuttuu. Ole hyvä ja lähetä lomake uudelleen.",
   "enterCode": "Anna lomakekoodi",
   "startOver": "Aloita alusta",
-  "formNotFound": "Lomaketta ei löytynyt"
+  "formNotFound": "Lomaketta ei löytynyt",
+  "readyToScan": "Valmiina lukemaan",
+  "readQR": "Lue QR-koodi tarkistaaksesi potilaan vastaukset.",
+  "patientFormSubmission": "Potilaslomake",
+  "multipleChoiceQuestion": "Monivalintakysymys",
+  "textQuestion": "Avoin kysymys"
 }
