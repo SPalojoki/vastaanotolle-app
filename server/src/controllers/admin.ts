@@ -122,4 +122,35 @@ adminRouter.post(
 	},
 )
 
+adminRouter.delete('/form/:id', async (req, res) => {
+	const formId = Number.parseInt(req.params.id)
+	
+	try {
+		if (Number.isNaN(formId)) {
+			return res.status(400).json({ error: 'Invalid ID' })
+		}
+	
+		const form = await prisma.form.findUnique({
+			where: {
+				id: formId,
+			},
+		})
+	
+		await prisma.$transaction([
+			prisma.formTranslation.deleteMany({ where: { formId } }),
+			prisma.questionTranslation.deleteMany({ where: { question: { formId } } }),
+			prisma.optionTranslation.deleteMany({ where: { option: { question: { formId } } } }),
+			prisma.option.deleteMany({ where: { question: { formId } } }),
+			prisma.question.deleteMany({ where: { formId } }),
+			prisma.form.delete({ where: { id: formId } }),
+		]);
+	
+		return res.status(500).json(form)
+
+	} catch (error) {
+    console.error('Error deleting form:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the form' })
+	}
+})
+
 export default adminRouter

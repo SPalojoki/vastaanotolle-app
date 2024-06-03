@@ -19,15 +19,26 @@ const useForms = () => {
     }
   }
 
+  const deleteForm = async (id: number) => {
+    try {
+      if (confirm('Are you sure you want to delete the form?')) {
+        await axios.delete(`/api/admin/form/${id}`)
+        setForms(forms.filter((form) => form.id !== id))
+      }
+    } catch (error) {
+      console.error('Failed to delete form.', error)
+    }
+  }
+
   useEffect(() => {
     setFormState()
   }, [])
 
-  return { forms }
+  return { forms, deleteForm }
 }
 
 const Forms = () => {
-  const { forms } = useForms()
+  const { forms, deleteForm } = useForms()
 
   return (
     <div className='w-full'>
@@ -68,6 +79,12 @@ const Forms = () => {
                     View
                   </a>
                   <button>Edit</button>
+                  <button
+                    className='text-red-600'
+                    onClick={() => deleteForm(form.id)}
+                  >
+                    Remove
+                  </button>
                 </td>
               </tr>
             ))}
