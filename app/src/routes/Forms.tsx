@@ -42,7 +42,7 @@ const Forms = () => {
               <th className='px-6 py-3'>Published</th>
               <th className='px-6 py-3'>Created at</th>
               <th className='px-6 py-3'>Updated at</th>
-              <th className='px-6 py-3'>Action</th>
+              <th className='px-6 py-3'>Actions</th>
             </tr>
           </thead>
           <tbody className='bg-gray-50'>
@@ -59,7 +59,16 @@ const Forms = () => {
                 <td className='px-6 py-3'>
                   {format(new Date(form.updatedAt), 'dd MMM yyyy HH:mm')}
                 </td>
-                <td className='px-6 py-3 text-blue-600'>Edit</td>
+                <td className='flex gap-8 px-6 py-3 text-blue-600'>
+                  <a
+                    href={`/${form.accessCode}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    View
+                  </a>
+                  <button>Edit</button>
+                </td>
               </tr>
             ))}
           </tbody>
