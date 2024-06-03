@@ -20,7 +20,6 @@ export const FormListingSchema = z.object({
   accessCode: z.string(),
   published: z.boolean(),
   createdAt: isoDateString,
-  updatedAt: isoDateString,
 })
 
 export const FormListingArraySchema = z.array(FormListingSchema)
@@ -32,11 +31,13 @@ export const LanguagesEnumSchema = z.enum(['FI', 'SE'])
 export type LanguagesEnum = z.infer<typeof LanguagesEnumSchema>
 
 export const FormTranslationSchema = z.object({
+  id: z.number().optional(),
   language: LanguagesEnumSchema,
   title: z.string(),
 })
 
 export const QandAnsTranslationSchema = z.object({
+  id: z.number().optional(),
   language: LanguagesEnumSchema,
   text: z.string(),
   reportText: z.string(),
@@ -69,6 +70,7 @@ export const QuestionSchema = z.union([
 ])
 
 export const FormSchema = z.object({
+  id: z.number().optional(),
   questions: z.array(QuestionSchema),
   translations: z.array(FormTranslationSchema),
 })

@@ -4,6 +4,7 @@ import { FormListing, FormListingArraySchema } from '../types'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { MdAdd } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 
 const useForms = () => {
   const [forms, setForms] = useState<FormListing[]>([])
@@ -39,6 +40,7 @@ const useForms = () => {
 
 const Forms = () => {
   const { forms, deleteForm } = useForms()
+  const navigate = useNavigate()
 
   return (
     <div className='w-full'>
@@ -51,8 +53,7 @@ const Forms = () => {
               <th className='px-6 py-3'>Title</th>
               <th className='px-6 py-3'>Access code</th>
               <th className='px-6 py-3'>Published</th>
-              <th className='px-6 py-3'>Created at</th>
-              <th className='px-6 py-3'>Updated at</th>
+              <th className='px-6 py-3'>Created / modified at</th>
               <th className='px-6 py-3'>Actions</th>
             </tr>
           </thead>
@@ -67,9 +68,6 @@ const Forms = () => {
                 <td className='px-6 py-3'>
                   {format(new Date(form.createdAt), 'dd MMM yyyy HH:mm')}
                 </td>
-                <td className='px-6 py-3'>
-                  {format(new Date(form.updatedAt), 'dd MMM yyyy HH:mm')}
-                </td>
                 <td className='flex gap-8 px-6 py-3 text-blue-600'>
                   <a
                     href={`/${form.accessCode}`}
@@ -78,7 +76,11 @@ const Forms = () => {
                   >
                     View
                   </a>
-                  <button>Edit</button>
+                  <button
+                    onClick={() => navigate(`/admin/form/edit/${form.id}`)}
+                  >
+                    Edit
+                  </button>
                   <button
                     className='text-red-600'
                     onClick={() => deleteForm(form.id)}

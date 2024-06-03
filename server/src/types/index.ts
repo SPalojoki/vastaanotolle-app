@@ -7,34 +7,35 @@ export interface ValidatedRequest<T> extends Request {
 
 const languageEnum = z.enum(['FI', 'SE', ])
 
+export const qAndAnsTranslationSchema = z.object({
+	language: languageEnum,
+	text: z.string(),
+	reportText: z.string(),
+})
+
+export const formSubmissionTranslationSchema = z.object({
+	language: languageEnum,
+	title: z.string(),
+})
+
+
 export const optionSubmissionSchema = z.object({
-	translations: z.array(z.object({
-		language: languageEnum,
-		text: z.string(),
-		reportText: z.string(),
-	})),
+	translations: z.array(qAndAnsTranslationSchema),
 })
 
 export const questionSubmissionSchema = z.object({
 	type: z.enum(['MULTIPLE_CHOICE', 'TEXT']),
 	answerCount: z.number().optional(), // Only required for MULTIPLE_CHOICE
 	options: z.array(optionSubmissionSchema).optional(), // Only required for MULTIPLE_CHOICE
-	translations: z.array(z.object({
-		language: languageEnum,
-		text: z.string(),
-		reportText: z.string(),
-	})),
+	translations: z.array(qAndAnsTranslationSchema),
 })
 
 export const formSubmissionSchema = z.object({
 	questions: z.array(questionSubmissionSchema).min(1),
-	translations: z.array(z.object({
-		language: languageEnum,
-		title: z.string(),
-	})),
+	translations: z.array(formSubmissionTranslationSchema),
 	})
 
-export type FormSubmission = z.infer<typeof formSubmissionSchema>
+export type formSubmission = z.infer<typeof formSubmissionSchema>
 
 const compressedAnswerSchema = z.union([z.string(), z.array(z.number())]);
 

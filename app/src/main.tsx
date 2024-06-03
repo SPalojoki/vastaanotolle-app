@@ -13,6 +13,7 @@ import AnswerForm from './routes/AnswerForm'
 import GenerateQR from './routes/GenerateQR'
 import ViewForm from './routes/ViewForm'
 import './i18n'
+import EditForm from './routes/EditForm'
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: 'form/new',
         element: <NewForm />,
+      },
+      {
+        path: 'form/edit/:id',
+        element: <EditForm />,
       },
     ],
   },

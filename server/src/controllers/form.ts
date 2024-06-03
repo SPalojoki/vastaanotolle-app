@@ -5,9 +5,10 @@ const formRouter = express.Router()
 
 formRouter.get('/:accessCode', async (req, res) => {
 	console.log('GET /form/:accessCode')
-	const form = await prisma.form.findUnique({
+	const form = await prisma.form.findFirst({
 		where: {
 			accessCode: req.params.accessCode,
+			isRemoved: false,
 		},
 		select: {
 			id: true,
