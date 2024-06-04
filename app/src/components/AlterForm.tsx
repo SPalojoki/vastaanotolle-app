@@ -1,8 +1,6 @@
 import { useState, Fragment } from 'react'
-import type { Form, LanguagesEnum, Question } from '../types'
+import type { LanguagesEnum, Question } from '../types'
 import { MdCheckBox, MdOutlineShortText, MdSave } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import Selector from '../components/Dropdown'
 import { UseAdminFormItems } from '../hooks/useAdminFormItems'
 

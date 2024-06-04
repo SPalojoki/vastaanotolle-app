@@ -38,7 +38,7 @@ const EndUserWrapper = () => {
       <header className='flex items-center justify-between bg-indigo-900 p-2 text-indigo-50'>
         <button
           className='group w-1/4 text-left transition-all'
-          onClick={(e) => navigate('/')}
+          onClick={() => navigate('/')}
         >
           <h1 className='group-hover:hidden'>Vastaanotolle.fi</h1>
           <p className='hidden font-light group-hover:block'>
