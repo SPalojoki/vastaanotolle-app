@@ -1,0 +1,4 @@
+vastaanotolle.spalojoki.net {
+    reverse_proxy / http://vastaanotolle-frontend:80
+    reverse_proxy /api http://vastaanotolle-backend:3000
+}

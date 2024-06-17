@@ -1,0 +1,30 @@
+# Stage 1: Build the application
+FROM node:20-alpine AS build
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+ARG POSTGRES_URL
+ENV POSTGRES_URL=${POSTGRES_URL}
+
+RUN npx prisma generate
+
+RUN npm run build
+
+# Stage 2: Run the application
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+COPY --from=build /usr/src/app/package*.json ./
+COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/prisma ./prisma
+
+RUN npm install --production
+
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
