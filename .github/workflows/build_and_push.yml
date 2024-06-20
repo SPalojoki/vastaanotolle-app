@@ -1,0 +1,35 @@
+name: Build and Push Docker Image to Artifact Registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ vars.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configure Docker for GCP Artifact Registry
+      run: |
+        gcloud auth configure-docker ${{ vars.ARTIFACT_REGISTRY_REGION }}-docker.pkg.dev
+
+    - name: Build Docker images
+      run: |
+        docker build -t ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-frontend -f ./app/Dockerfile.prod ./app
+        docker build -t ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-backend -f ./server/Dockerfile.prod ./server
+
+
+    - name: Push Docker image to Artifact Registry
+      run: |
+        docker push ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-frontend
+        docker push ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-backend
