@@ -29,11 +29,11 @@ jobs:
 
     - name: Build Docker images
       run: |
-        docker build -t ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-frontend -f ./app/Dockerfile.prod ./app
-        docker build -t ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-backend -f ./server/Dockerfile.prod ./server
+        docker build -t ${{ vars.ARTIFACT_REGISTRY_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-frontend -f ./app/Dockerfile.prod ./app
+        docker build -t ${{ vars.ARTIFACT_REGISTRY_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-backend -f ./server/Dockerfile.prod ./server
 
 
     - name: Push Docker image to Artifact Registry
       run: |
-        docker push ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-frontend
-        docker push ${{ vars.ARTIFACT_REGISTRY_REGION }}.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-backend
+        docker push ${{ vars.ARTIFACT_REGISTRY_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-frontend
+        docker push ${{ vars.ARTIFACT_REGISTRY_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO }}/esitietoni-backend
