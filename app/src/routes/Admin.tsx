@@ -33,7 +33,7 @@ const NavigationBar = () => {
         <div className='container mx-auto flex'>
           <div className='flex items-center pr-12 text-gray-400'>
             <p className='border-r-2 border-r-gray-200 pr-4 text-2xl font-bold '>
-              Vastaanotolle.fi
+              Esitietoni.fi
             </p>
             <h1 className=' pl-4 text-xl font-medium '>Admin tools</h1>
           </div>

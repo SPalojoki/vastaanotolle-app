@@ -112,7 +112,7 @@ const Welcome = () => {
       />
       <div className='text-center md:justify-self-start md:text-left'>
         <h1 className='md:text-md hidden md:block lg:text-xl'>
-          Vastaanotolle.fi
+          Esitietoni.fi
         </h1>
         <p className='text-2xl font-bold'>{t('enterCode')}</p>
         <InputCode />

@@ -40,7 +40,7 @@ const EndUserWrapper = () => {
           className='group w-1/4 text-left transition-all'
           onClick={() => navigate('/')}
         >
-          <h1 className='group-hover:hidden'>Vastaanotolle.fi</h1>
+          <h1 className='group-hover:hidden'>Esitietoni.fi</h1>
           <p className='hidden font-light group-hover:block'>
             {t('startOver')}
           </p>
